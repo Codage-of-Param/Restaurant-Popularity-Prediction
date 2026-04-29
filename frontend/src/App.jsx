@@ -91,7 +91,10 @@ export default function App() {
 
     // Transformations
     const serviceScore = Object.values(services).filter(Boolean).length;
-    const cuisinesString = selectedCuisines.join(', ');
+    // Make cuisine order deterministic so the same set of cuisines yields the same prediction
+    // across devices/selection order (backend uses a single primary cuisine feature).
+    const cuisinesSorted = [...selectedCuisines].sort();
+    const cuisinesString = cuisinesSorted.join(', ');
     const avgCostForTwo = budget * 2;
     const priceRangeMap = { 'Budget': 1, 'Affordable': 2, 'Mid-range': 3, 'Fine Dining': 4 };
     
@@ -133,7 +136,11 @@ export default function App() {
       setSuccessLabel(data.success_label || 'READY');
     } catch (e) {
       console.error("Prediction failed", e);
-      setValidationError(`Prediction failed: ${e.message}. Please ensure the backend is running and accessible.`);
+      let errorMsg = e.message;
+      if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError') || e.message.includes('Load failed')) {
+         errorMsg = "Network error. If you are on a mobile device or using a privacy browser (like Brave/Safari), an Ad-Blocker or tracking shield might be blocking the connection to the backend. Try disabling it for this site.";
+      }
+      setValidationError(`Prediction failed: ${errorMsg}`);
       setScore(null);
       setPredictedRating(0);
     }
@@ -163,7 +170,7 @@ export default function App() {
       
       const qs = new URLSearchParams({
         city: city,
-        cuisines: selectedCuisines.join(',')
+        cuisines: [...selectedCuisines].sort().join(',')
       }).toString();
       const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
       const response = await fetch(`${API_BASE}/benchmarks?${qs}`);

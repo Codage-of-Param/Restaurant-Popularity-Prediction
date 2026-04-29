@@ -63,9 +63,26 @@ def build_feature_row(
     warnings: list[str] = []
 
     # 1. Cuisine Engineering (Sync with Final_RP.py)
-    cuisine_list = [c.strip() for c in str(cuisines).split(',')]
+    cuisine_tokens = str(cuisines).replace("|", ",").split(",")
+    raw_cuisines = [c.strip() for c in cuisine_tokens if c and c.strip()]
+
+    # Ensure predictions are stable even if the user selects cuisines in a different order
+    # (common across devices/UI flows). The model only uses a single `primary_cuisine` feature,
+    # so we pick a deterministic one.
+    seen: set[str] = set()
+    unique_cuisines: list[str] = []
+    for c in raw_cuisines:
+        key = c.casefold()
+        if key in seen:
+            continue
+        seen.add(key)
+        unique_cuisines.append(c)
+
+    cuisine_list = sorted(unique_cuisines, key=lambda s: s.casefold())
     cuisine_count = len(cuisine_list)
     primary_cuisine = cuisine_list[0] if cuisine_list else "Unknown"
+    if cuisine_count > 1:
+        warnings.append("Multiple cuisines provided; using alphabetical primary cuisine for prediction.")
 
     # 2. Encoding
     # Handle "City, India" format from frontend
