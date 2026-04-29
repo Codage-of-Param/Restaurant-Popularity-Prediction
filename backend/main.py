@@ -147,8 +147,8 @@ def predict(data: PredictRequest):
                 "success_label": response_data.success_label
             })
             client.table("predictions").insert(record).execute()
-        except:
-            pass
+        except Exception as e:
+            print(f"Warning: Failed to record prediction in Supabase: {e}")
 
         return response_data
     except Exception as e:
