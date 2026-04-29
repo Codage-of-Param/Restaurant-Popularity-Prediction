@@ -681,7 +681,7 @@ export default function App() {
                 </div>
 
                 {/* ADDITIONAL PERFORMANCE BENCHMARKS */}
-                <div style={{gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginTop: 12}}>
+                <div style={{gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16, marginTop: 12}}>
                    <div className="premium-card" style={{padding: '24px', textAlign: 'center'}}>
                       <div style={{fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 8, letterSpacing: 1}}>AVG. MARKET RATING</div>
                       <div style={{fontSize: 24, fontWeight: 900, color: 'var(--text-main)'}}>
@@ -702,7 +702,7 @@ export default function App() {
                    </div>
                    <div className="premium-card" style={{padding: '24px', textAlign: 'center'}}>
                       <div style={{fontSize: 10, color: 'var(--text-muted)', fontWeight: 800, marginBottom: 8, letterSpacing: 1}}>COMPETITION LEVEL</div>
-                      <div style={{fontSize: 18, fontWeight: 900, color: 'var(--accent-orange)'}}>HIGH DENSITY</div>
+                      <div style={{fontSize: 18, fontWeight: 900, color: 'var(--accent-orange)', wordBreak: 'break-word'}}>HIGH DENSITY</div>
                    </div>
                 </div>
               </div>
